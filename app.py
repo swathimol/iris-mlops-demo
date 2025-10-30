@@ -1,21 +1,30 @@
 # app.py
-import streamlit as st
+import gradio as gr
 import joblib
 import numpy as np
 
-# Load trained model
+# Load model
 model = joblib.load("model.pkl")
 
-st.title("🌸 Iris Flower Prediction App")
-
-# Input fields
-sepal_length = st.number_input("Sepal Length (cm)", 0.0, 10.0, 5.1)
-sepal_width = st.number_input("Sepal Width (cm)", 0.0, 10.0, 3.5)
-petal_length = st.number_input("Petal Length (cm)", 0.0, 10.0, 1.4)
-petal_width = st.number_input("Petal Width (cm)", 0.0, 10.0, 0.2)
-
-if st.button("Predict"):
+# Prediction function
+def predict(sepal_length, sepal_width, petal_length, petal_width):
     data = np.array([[sepal_length, sepal_width, petal_length, petal_width]])
-    prediction = model.predict(data)[0]
+    pred = model.predict(data)[0]
     iris_classes = ["Setosa", "Versicolor", "Virginica"]
-    st.success(f"🌼 Predicted Iris Flower: **{iris_classes[prediction]}**")
+    return f"🌸 Predicted Iris Flower: {iris_classes[pred]}"
+
+# Gradio interface
+demo = gr.Interface(
+    fn=predict,
+    inputs=[
+        gr.Number(label="Sepal Length (cm)"),
+        gr.Number(label="Sepal Width (cm)"),
+        gr.Number(label="Petal Length (cm)"),
+        gr.Number(label="Petal Width (cm)")
+    ],
+    outputs=gr.Textbox(label="Prediction"),
+    title="🌼 Iris Flower Prediction App",
+    description="A simple demo using Logistic Regression and the Iris dataset."
+)
+
+demo.launch()
