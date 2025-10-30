@@ -1,4 +1,5 @@
-streamlit
+gradio
 scikit-learn
 joblib
 numpy
+
